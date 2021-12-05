@@ -1,16 +1,20 @@
 <template>
-  <Table
-    :rows="rows"
-    :total-pages="10"
-    :current-page="currentPage"
-    :static-paging="false"
-    @getPage="infGetPage"
-  >
-    <TableColumn prop="id" title="ID" />
-    <TableColumn prop="userId" title="Post ID" />
-    <TableColumn prop="title" title="Post title" />
-    <TableColumn prop="body" title="Post content" />
-  </Table>
+  <div>
+    <button @click="switchPagType" class="button-pagination">Switch pagination type</button>
+    <Table
+      :rows="rows"
+      :total-pages="10"
+      :current-page="currentPage"
+
+      :static-paging="pagingTypeIsStatic"
+      @getPage="getPageType"
+    >
+      <TableColumn prop="id" title="ID" />
+      <TableColumn prop="userId" title="Post ID" />
+      <TableColumn prop="title" title="Post title" />
+      <TableColumn prop="body" title="Post content" />
+    </Table>
+  </div>
 </template>
 
 <script>
@@ -31,7 +35,9 @@ export default {
   data() {
     return {
       rows: [],
-      currentPage: 1
+      currentPage: 1,
+      pagingTypeIsStatic: true,
+      getPageType: this.getPage
     }
   },
   methods: {
@@ -46,6 +52,14 @@ export default {
       const newRows = await res.json();
       this.rows = [...this.rows, ...newRows];
       this.currentPage++;
+    },
+    switchPagType() {
+      this.currentPage = 1
+      this.getPage(1)
+      this.pagingTypeIsStatic = !this.pagingTypeIsStatic
+      this.pagingTypeIsStatic
+        ? this.getPageType = this.getPage
+        : this.getPageType = this.infGetPage
     }
   },
 }
@@ -58,5 +72,10 @@ body {
   -moz-osx-font-smoothing: grayscale;
   text-align: center;
   color: #2c3e50;
+}
+
+.button-pagination {
+  margin-top: 20px;
+  padding: 5px 10px;
 }
 </style>
